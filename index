@@ -1,0 +1,98 @@
+<template>
+	<div class="container">
+    <form  @submit.prevent="rotate(90); maximize()">
+    <cropper
+    class="cropper"
+    ref="cropper"
+    :src="img"
+    :transitions="true"
+			image-restriction="fit-area"
+      :stencil-props="{
+				minAspectRatio: 10 / 20,
+			}"
+		@change="change"
+	:default-size="defaultSize"
+    
+	
+	/><button  >Rotate</button></form></div>
+  
+</template>
+
+<script>
+import { Cropper } from 'vue-advanced-cropper';
+import 'vue-advanced-cropper/dist/style.css';
+import { ResizeEvent } from 'vue-advanced-cropper';
+
+
+export default {
+	components: {
+		Cropper,
+	},
+	data() {
+
+		return {
+			img: 'https://images.pexels.com/photos/4323307/pexels-photo-4323307.jpeg',
+		};
+	},
+	methods: {
+		change({ coordinates, canvas }) {
+			this.size.width = Math.round(coordinates.width);
+			this.size.height = Math.round(coordinates.height);
+		},
+
+    maximize() {
+      setTimeout(()=>{
+      console.log("nikka nikka");
+			const { cropper } = this.$refs;
+			const center = {
+				left: cropper.coordinates.left + cropper.coordinates.width / 2,
+				top: cropper.coordinates.top + cropper.coordinates.height / 2,
+			};
+			cropper.setCoordinates([
+				({ coordinates, imageSize }) => ({
+					width: imageSize.width,
+					height: imageSize.height,
+				}),
+				({ coordinates, imageSize }) => ({
+					left: center.left - coordinates.width / 2,
+					top: center.top - coordinates.height / 2,
+				}),
+			]);
+		},500)},
+    
+    rotate(angle) {
+      console.log("wakka wakka");
+			this.$refs.cropper.rotate(angle);
+       
+		},
+    defaultSize({ imageSize, visibleArea }) {
+      console.log("bakka");
+			return {
+				width: (visibleArea || imageSize).width,
+				height: (visibleArea || imageSize).height,
+			};
+		},
+	},
+};
+</script>
+<style>
+.container{
+  
+  display: flex;
+  /* max-width: 1000px; */
+
+}
+.form{
+  
+  display: flex;
+  /* max-width: 1000px; */
+
+}
+
+
+.button{
+  margin: 100px;
+}
+.cropper{
+ max-width: 500px;}
+</style>
